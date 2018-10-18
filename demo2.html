@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Page Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        *
+        {
+            padding: 0;
+            margin: 0;
+        }
+        #title
+        {
+            color: red;
+            font-size: 90px;
+            text-align: center;
+            font-weight: bolder;
+            font-style: italic;
+            margin-top: 20px;
+            opacity: 0.3;
+        }
+        #ul1
+        {
+            width: 50%;
+            margin: 30px auto 100px auto;
+            padding: 30px 20px 30px 20px;
+            border: 1px solid gray;
+            border-radius: 30px;
+            box-shadow: 10px 10px 5px gray;
+        }
+        #ul1 li 
+        {
+            list-style-type: none;
+            font-size: 30px;
+        }
+        .chosen
+        {
+            color: gray;
+            text-decoration-line: line-through;
+        }
+        #ul1 li
+        {
+            position: relative;
+            border-bottom:1px dotted gray;
+        }
+        #ul1 li:last-child
+        {
+            border: none;
+        }
+        #ul1 li .deleteing
+        {
+            display: none;
+            position: absolute;
+            right: 20px;
+            top: 5px;
+        }
+        #ul1 li .editing
+        {
+            display: none;
+            position: absolute;
+            right: 80px;
+            top: 5px;
+        }
+        #ul1 li:hover .deleteing
+        {
+            display: inline-block;
+        }
+        #ul1 li:hover .editing
+        {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <p id="title">todos</p>
+
+    <div id="ul1" class="container">
+    <ul>
+        <li v-for="x in todos" >
+             <input type="checkbox" v-model = "x.completed"> <span v-bind:class="{chosen:x.completed}">{{x.name}}</span> &nbsp;
+              <button class="btn btn-danger deleteing" v-on:click="del(x.id)" >删除</button>&nbsp; 
+              <button class="btn btn-success editing" v-on:click="edit(x.id)" >编辑</button> 
+        </li>
+    </ul>
+    <input type="text" id="txt1" placeholder="输入事项...." autofocus="autofocus" v-on:keyup.enter="add()"/>
+    <!-- <button class="btn btn-primary" v-on:click="add()" v-focus>点击我，添加</button> -->
+    <br>
+    <br>
+    <button class="btn btn-primary" v-on:click="clearboth()">清除所有已完成项</button>
+    <button class="btn btn-primary" v-on:click="chooseboth()">全选</button>
+    </div>
+
+
+    <script src="../node_modules/vue/dist/vue.min.js"></script>
+    <script>
+        // import store from './store.js';
+        // console.log(store);
+        var vm = new Vue({
+            el:'#ul1',
+            data:{
+                todos:[
+                    {id:1,name:"吃饭",completed:false},
+                    {id:2,name:"睡觉",completed:true},
+                    {id:3,name:"跳舞",completed:false}
+                ],
+                now:true,
+
+            },
+            methods:{
+                add:function(){
+                    var content = document.getElementById('txt1');
+                    ((content.value == null || content.value == '')?alert('不要输入空值'):this.todos.push({
+                        id:function ramdom(){
+                            var ram = Math.random();
+                            for(let i = 0;i<this.todos.length;i++)
+                            {
+                                if(this.todos[i].id == ram)
+                                {
+                                    ram = ramdom();
+                                    break;
+                                }
+                            }
+                            return ram;
+                        },
+                        name:content.value,
+                        completed:false
+                    }));
+                    content.value = '';
+                },
+                del:function(id){
+                    for(let i = 0;i<this.todos.length;i++)
+                    {
+                        if(this.todos[i].id === id)
+                        {
+                            this.todos.splice(i,1);
+                        }
+                    }
+                },
+                edit:function(id){
+                    for(let i = 0;i<this.todos.length;i++)
+                    {
+                        if(this.todos[i].id == id)
+                        {
+                            var content = prompt("",this.todos[i].name);
+                            if(content !== null)
+                            {
+                                this.todos[i].name = content;
+                            }
+                        }
+                    }
+                },
+
+                clearboth:function(){
+                    var todos2 = [];
+                    for(var i = 0;i<this.todos.length;i++)
+                    {
+                        if(!this.todos[i].completed)
+                        {
+                            todos2.push(this.todos[i]);
+                        }
+                    }
+                    this.todos = todos2;
+                },
+                chooseboth:function(){
+                    for(let i = 0;i<this.todos.length;i++)
+                    {
+                        this.todos[i].completed = this.now;
+                    }
+                    this.now = !this.now;
+                }
+            },
+            // watch:{
+            //     "trueattr":function(){
+            //         if(this.trueattr.length === this.todos.length)
+            //         {
+            //             for(let i = 0;i<this.todos.length;i++)
+            //             this.todos[i].completed = false;
+            //             this.trueattr = [];
+            //         }
+            //     }
+            // }
+        });
+        console.log(document.getElementById('cb').checked);
+    </script>
+</body>
+</html>
